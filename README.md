@@ -1,6 +1,6 @@
 # cassie
 
-ClojureScript librarty for generating and injecting CSS at runtime. Uses [Garden](https://github.com/noprompt/garden) for CSS rendering.
+ClojureScript library for generating and injecting CSS at runtime. Uses [Garden](https://github.com/noprompt/garden) for CSS rendering.
 
 ## Usage
 
