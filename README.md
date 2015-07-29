@@ -20,6 +20,7 @@ Then use:
 ### Inject a style
 ```clojure
 (require '[cassie.core :as cass])
+(require '[garden.color :as color :refer [rgb]])
 (def base-color (rgb 0 83 150))
 (cass/set-style! [[:html {:background-color "#ccc"}]
                     [:h1 {:color base-color}]
