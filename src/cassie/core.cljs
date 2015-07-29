@@ -1,7 +1,24 @@
 (ns cassie.core
   (:require [garden.core :refer [css]]))
 
-(def custom-style-block-name "cassie-css")
+(def cassie-stylesheet-name "cassie-css")
+
+(defn- get-cassie-stylesheet
+  []
+  (let [style-el (.getElementById js/document cassie-stylesheet-name)]
+    (first (filter #(not (nil? %)) (map-indexed (fn [idx]
+                                  (let [sheet (aget (.. js/document -styleSheets) idx)]
+                                    (if (= (.-ownerNode sheet) style-el)
+                                      sheet)))
+                                (range (.. js/document -styleSheets -length)))))))
+
+(defn- create-cassie-stylesheet!
+  []
+  (let [style-el (.createElement js/document "style")]
+    (.setAttribute style-el "type" "text/css")
+    (.setAttribute style-el "id" cassie-stylesheet-name)
+    (.appendChild (.. js/document -head) style-el)
+    (.-sheet style-el)))
 
 (defn add-stylesheet!
   "Adds the stylesheet from the given URI"
@@ -17,20 +34,12 @@
       (.setAttribute link "rel" "stylesheet")
       (.appendChild (.. js/document -head) link))))
 
-(defn remove-all-styles!
-  "Removes all styles from the injected stylesheet"
-  []
-  (if-let [style-el (.getElementById js/document custom-style-block-name)]
-    (set! (.. style-el -innerText) nil)))
-
 (defn set-style!
   "Adds a CSS style to the current page"
-  [style]
-  (if-not (.getElementById js/document custom-style-block-name)
-    (let [style-el (.createElement js/document "style")]
-      (.setAttribute style-el "id" custom-style-block-name)
-      (.setAttribute style-el "type" "text/css")
-      (.appendChild (.. js/document -head) style-el)))
-  (let [style-el (.getElementById js/document custom-style-block-name)
-        new-inner-text (css {:pretty-print? false} style)]
-    (set! (.. style-el -innerText) new-inner-text)))
+  [styles]
+  (if (nil? (get-cassie-stylesheet))
+    (create-cassie-stylesheet!))
+  (let [old-ss (get-cassie-stylesheet)
+        ss (if (nil? ss) (create-cassie-stylesheet!) old-ss)]
+    (doseq [idx (range (count styles))]
+      (.insertRule ss (css {:pretty-print false} (nth styles idx)) idx))))
