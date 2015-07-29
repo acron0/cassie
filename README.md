@@ -4,7 +4,12 @@ ClojureScript librarty for generating and injecting CSS at runtime. Uses [Garden
 
 ## Usage
 
-Not on clojars yet, so clone the repo and `lein install`
+Not on clojars yet, so clone the repo and `lein install`.
+Then use:
+
+```
+[cassie "0.1.0-SNAPSHOT"]
+```
 
 ### Add a stylesheet
 ```clojure
